@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -93,6 +94,21 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
+    }
+    
+    
+    public function actionRegistration(){
+        
+        $model = new User();
+
+        if($model->load(Yii::$app->request->post()) && $model->validate()){
+            if(User::create($model->name, $model->login, $model->password) != null){
+                return $this->redirect('/');
+            }
+
+        }
+
+        return $this->render('registration', ['model' => $model]);
     }
 
     /**
