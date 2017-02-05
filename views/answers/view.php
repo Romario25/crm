@@ -38,7 +38,7 @@ $this->params['breadcrumbs'][] = $this->title;
         $this->registerJs(
             '$("document").ready(function(){
                 $("#new_question").on("pjax:end", function() {
-                    $.pjax.reload({container:"#questions"});  //Reload GridView
+                    $.pjax.reload({container:"#questions"}); 
                 });
             });'
         );
@@ -46,7 +46,17 @@ $this->params['breadcrumbs'][] = $this->title;
 
         <div class="notes-form">
             <?php yii\widgets\Pjax::begin(['id' => 'new_question']) ?>
-            <?php $form = ActiveForm::begin(['options' => ['data-pjax' => true]]); ?>
+            <?php if(Yii::$app->session->hasFlash('error')): ?>
+                <div class="alert alert-danger">
+                    <?= Yii::$app->session->get('error') ?>
+                </div>
+            <?php endif; ?>
+            <?php if(Yii::$app->session->hasFlash('success')): ?>
+                <div class="alert alert-success">
+                    <?= Yii::$app->session->get('success') ?>
+                </div>
+            <?php endif; ?>
+            <?php $form = ActiveForm::begin([ 'options' => ['data-pjax' => true]]); ?>
 
             <?= $form->field($questionForm, 'body')->textarea(['rows' => 6]) ?>
 

@@ -11,15 +11,27 @@ namespace app\controllers;
 
 
 
+use app\forms\QuestionForm;
 use app\models\Answer;
 use app\models\Question;
+use app\services\QuestionService;
 use Yii;
+use yii\base\Module;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\web\HttpException;
 
 class AnswersController extends Controller
 {
+
+    private $questionService;
+    
+    public function __construct($id, Module $module, QuestionService $questionService, array $config = [])
+    {
+        $this->questionService = $questionService;
+        parent::__construct($id, $module, $config);
+    }
+
 
     public function behaviors()
     {
@@ -59,21 +71,19 @@ class AnswersController extends Controller
     }
 
     public function actionView($id){
-
+        
         $answer = Answer::findOne($id);
         if(is_null($answer)) throw new HttpException(404);
 
-        $questionForm = new Question();
-        $questionForm->answer_id = $answer->id;
-        if (!Yii::$app->user->isGuest && $questionForm->load(Yii::$app->request->post()) && $questionForm->save())
+        $questionForm = new QuestionForm();
+
+        if (!Yii::$app->user->isGuest && $questionForm->load(Yii::$app->request->post()) && $questionForm->validate())
         {
-            $questionForm = new Question();
-            $questionForm->answer_id = $answer->id;
+            $this->questionService->addQuestion($answer->id, Yii::$app->user->getId(), $questionForm->body);
+            $questionForm = new QuestionForm();
         }
 
-        $questions = Question::find()->where('answer_id = :answer_id', [
-            ':answer_id' => $answer->id
-        ])->all();
+        $questions = $this->questionService->findIsAnswer($answer->id);
 
         return $this->render('view', [
             'answer' => $answer,
