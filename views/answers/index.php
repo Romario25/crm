@@ -20,7 +20,7 @@ use yii\helpers\StringHelper;
         <?php foreach ($model as $item): ?>
 
             <div class="row">
-                <?= Html::a(StringHelper::truncate($item->body, 25), ['/answers/view', 'id' => $item->id]) ?>
+                <?= Html::a(StringHelper::truncate(Html::encode($item->body), 25), ['/answers/view', 'id' => $item->id]) ?>
                 <br>
                 <?= $item->created_at ?> - <?= $item->user->name ?>
             </div>

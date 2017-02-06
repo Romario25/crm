@@ -15,14 +15,14 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1>Ответы на вопрос : <?= $answer->id ?></h1>
 
     <p>
-        <?= $answer->body; ?>
+        <?= Html::encode($answer->body); ?>
     </p>
 
 
     <?php Pjax::begin(['id' => 'questions']) ?>
         <?php foreach($questions as $question): ?>
             <div>
-                <?= $question->body ?>    
+                <?= Html::encode($question->body) ?>    
             </div>
             <div>
                 <?= $question->created_at ?> | <?= $question->user->name ?>
